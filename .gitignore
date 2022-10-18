@@ -1,0 +1,9 @@
+.bundle/
+.jekyll-cache/
+.tweet-cache/
+.jekyll-metadata
+
+Gemfile.lock
+_site/
+
+vendor/
