@@ -18,6 +18,7 @@
     {%- endif %}
   </head>
 
+  {% if page.authors %}
   <d-front-matter>
     <script async type="text/json">{
       "title": "{{ page.title }}",
@@ -53,6 +54,7 @@
       }
     }</script>
   </d-front-matter>
+  {% endif %}
 
   <body class="{%- if site.navbar_fixed -%}fixed-top-nav{%- endif -%} {%- unless site.footer_fixed -%}sticky-bottom-footer{%- endunless -%}">
 
@@ -102,7 +104,7 @@
     {%- include footer.html %}
 
     <d-bibliography src="{{ page.bibliography | prepend: '/assets/bibliography/' | relative_url }}"></d-bibliography>
-    
+
     {% include scripts/bootstrap.html %}
     {% include scripts/analytics.html %}
   </body>

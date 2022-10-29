@@ -2,8 +2,10 @@
 .jekyll-cache/
 .tweet-cache/
 .jekyll-metadata
+.DS_Store
 
 Gemfile.lock
 _site/
 
 vendor/
+
