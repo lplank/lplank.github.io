@@ -1,6 +1,7 @@
 // Has to be in the head tag, otherwise a flicker effect will occur.
 
 let toggleTheme = (theme) => {
+  window.dispatchEvent(new Event("toogleTheme", {"theme": theme}));
   if (theme == "dark") {
     setTheme("light");
   } else {
@@ -20,7 +21,7 @@ let setTheme = (theme) =>  {
     document.documentElement.removeAttribute("data-theme");
   }
   localStorage.setItem("theme", theme);
-  
+
   // Updates the background of medium-zoom overlay.
   if (typeof medium_zoom !== 'undefined') {
     medium_zoom.update({
@@ -54,9 +55,10 @@ let initTheme = (theme) => {
     const userPref = window.matchMedia;
     if (userPref && userPref('(prefers-color-scheme: dark)').matches) {
         theme = 'dark';
+        window.__theme__ = 'dark'
     }
   }
-  
+
   setTheme(theme);
 }
 

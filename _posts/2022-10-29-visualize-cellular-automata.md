@@ -6,6 +6,50 @@ description: Exploring a computational view of the processes in the universe
 tags: computation automata
 ---
 
+<script>
+
+let renderModels = (models, darkTheme) => {
+    for(let model of models) {
+        // get the parent element of the viewer
+        let parentDiv = document.getElementById (model.id);
+        if(parentDiv.hasChildNodes()) {
+            parentDiv.removeChild(parentDiv.firstChild)
+        }
+
+        // initialize the viewer with the parent element and some parameters
+        let viewer = new OV.EmbeddedViewer(parentDiv, {
+            backgroundColor : (darkTheme ? new OV.RGBAColor(0, 0, 0, 0) : new OV.RGBAColor(255, 255, 255, 0)),
+            defaultColor : new OV.RGBColor(127, 127, 127),
+            edgeSettings : {
+                showEdges : true,
+                edgeColor : (darkTheme ? new OV.RGBColor(0, 0, 0) : new OV.RGBColor(255, 255, 255)),
+                edgeThreshold : 1
+            },
+            environmentSettings : {
+                environmentMap : [],
+                backgroundIsEnvMap : false
+            },
+            onModelLoaded : () => {
+                let model = viewer.GetModel ();
+            }
+        });
+
+        viewer.viewer.SetFixUpVector (false);
+        viewer.LoadModelFromUrlList ([model.m]);
+    }
+}
+
+window.addEventListener('load', () => {
+    darkTheme = window.__theme__ == 'dark'
+    renderModels([
+        {"m": "/assets/models/30.obj", "cap": "rule 30", "id": "viewer-rule-30"},
+        {"m": "/assets/models/110.obj", "cap": "rule 30", "id": "viewer-rule-110"},
+        {"m": "/assets/models/169.obj", "cap": "rule 30", "id": "viewer-rule-169"},
+    ], darkTheme)
+});
+
+</script>
+
 In this post I plan to set the scene for a nice visualization of cellular automata and pretty much anything else.
 
 The idea is basically a mix of Github ability to preview `.stl` 3d files and the illustration in Wolfram's "A new kind of science".
@@ -44,7 +88,7 @@ def face(face, count):
 
 
 ```python
-def generate_model(file, count, i, j):
+def generate_cell(file, count, i, j):
     start = count * 8
 
     lines = [f'g cell{i}-{j}\n', 'usemtl Red\n']
@@ -53,7 +97,7 @@ def generate_model(file, count, i, j):
     for di in [0, 1]:
         for dj in [0, 1]:
             for dz in [0, 1]:
-                vertex.append(f'v {i+di} {j+dj} {z+dz}\n')
+                vertex.append(f'v {j+dj} {i+di} {z+dz}\n')
 
     for v in vertex:
         lines.append(v)
@@ -75,8 +119,8 @@ def create_3d_obj(rule, data):
 
     for i, row in enumerate(data):
         for j, col in enumerate(row):
-            if data[i][j] == 0:
-                generate_model(file, count, i, j)
+            if data[i][j] == 1: # 0 or 1 depending on the CA
+                generate_cell(file, count, len(data)-i, j)
                 count += 1
 
     file.close()
@@ -102,30 +146,21 @@ create_3d_obj(rule, data)
 
 And here's the result
 
-
-<div class="online_3d_viewer"
-    style="width: 800px; height: 600px;"
-    model="/assets/models/30.obj">
-</div>
+<div id="viewer-rule-30" style="width: 800px; height: 600px;"></div>
 <div class="caption">rule 30</div>
 
-<div class="online_3d_viewer"
-    style="width: 800px; height: 600px;"
-    model="/assets/models/169.obj">
-</div>
+<div id="viewer-rule-110" style="width: 800px; height: 600px;"></div>
+<div class="caption">rule 110</div>
+
+<div id="viewer-rule-169" style="width: 800px; height: 600px;"></div>
 <div class="caption">rule 169</div>
 
-<div class="online_3d_viewer"
-    style="width: 800px; height: 600px;"
-    model="/assets/models/110.obj">
-</div>
-<div class="caption">rule 110</div>
 
 Coming soon:
 
-I'm no expert on 3d visualization but the reason I think the figures are a bit laggy, especially if they are large enough, is that each CA cell is its own figure. One optimization that I'll try to implement in the future is to merge all adjacent cells into one figure (this mean that all non-edge vertex can be removed and several faces merged together).
+I'm no expert on 3d visualization but I think the reason the figures are a bit laggy, especially if they are large enough, is that each CA cell is its own figure. One optimization that I'll try to implement in the future is to merge all adjacent cells into one figure (this mean that all non-edge vertex can be removed and several faces merged together).
 
-I'll probably need to use use the [SCC](https://en.wikipedia.org/wiki/Strongly_connected_component) to undersand which cells should be merged together. The tricky thing will probably be specifying the vertex of such non regular figures/solids (since the list of vertex needs to be ordered - in general counter clock wise). I will probably need to used some idea from the [convex hull](https://en.wikipedia.org/wiki/Convex_hull) to specify such ordering.
+I'll probably need to use use [SCC](https://en.wikipedia.org/wiki/Strongly_connected_component) to undersand which cells should be merged together. The tricky thing will probably be specifying the vertexes for such non regular faces (since the list of vertex needs to be ordered - in general counter clock wise). I will probably need to used some idea from the [convex hull](https://en.wikipedia.org/wiki/Convex_hull) to specify such ordering.
 
 It should be fun
 
