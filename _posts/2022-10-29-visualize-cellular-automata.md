@@ -35,7 +35,10 @@ let renderModels = (models, darkTheme) => {
         });
 
         viewer.viewer.SetFixUpVector (false);
-        viewer.LoadModelFromUrlList ([model.m]);
+        viewer.LoadModelFromUrlList ([
+            model.m,
+            "/assets/models/automata.mtl"
+        ]);
     }
 }
 
