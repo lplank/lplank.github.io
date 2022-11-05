@@ -1,15 +1,1 @@
-importScripts ('occt-import-js.js');
-
-onmessage = async function (ev)
-{
-	let occt = await occtimportjs ();
-	let result = null;
-	if (ev.data.format === 'step') {
-		result = occt.ReadStepFile (ev.data.buffer);
-	} else if (ev.data.format === 'iges') {
-		result = occt.ReadIgesFile (ev.data.buffer);
-	} else if (ev.data.format === 'brep') {
-		result = occt.ReadBrepFile (ev.data.buffer);
-	}
-	postMessage (result);
-};
+importScripts("occt-import-js.js"),onmessage=async function(a){let t=await occtimportjs(),e=null;"step"===a.data.format?e=t.ReadStepFile(a.data.buffer):"iges"===a.data.format?e=t.ReadIgesFile(a.data.buffer):"brep"===a.data.format&&(e=t.ReadBrepFile(a.data.buffer)),postMessage(e)};
