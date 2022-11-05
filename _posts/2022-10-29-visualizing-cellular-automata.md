@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Visualize cellular automata
+title: Visualizing cellular automata
 date: 2022-10-28
-description: Exploring a computational view of the processes in the universe
+description:
 tags: computation automata
 ---
 
@@ -18,12 +18,12 @@ let renderModels = (models, darkTheme) => {
 
         // initialize the viewer with the parent element and some parameters
         let viewer = new OV.EmbeddedViewer(parentDiv, {
-            backgroundColor : (darkTheme ? new OV.RGBAColor(0, 0, 0, 0) : new OV.RGBAColor(255, 255, 255, 0)),
+            backgroundColor : new OV.RGBAColor(255, 255, 255, 0),
             defaultColor : new OV.RGBColor(127, 127, 127),
             edgeSettings : {
                 showEdges : true,
-                edgeColor : (darkTheme ? new OV.RGBColor(0, 0, 0) : new OV.RGBColor(255, 255, 255)),
-                edgeThreshold : 1
+                edgeColor : new OV.RGBAColor(0, 0, 0, 1),
+                edgeThreshold : 0.5
             },
             environmentSettings : {
                 environmentMap : [],
@@ -45,9 +45,11 @@ let renderModels = (models, darkTheme) => {
 window.addEventListener('load', () => {
     darkTheme = window.__theme__ == 'dark'
     renderModels([
-        {"m": "/assets/models/30.obj", "cap": "rule 30", "id": "viewer-rule-30"},
-        {"m": "/assets/models/110.obj", "cap": "rule 30", "id": "viewer-rule-110"},
-        {"m": "/assets/models/169.obj", "cap": "rule 30", "id": "viewer-rule-169"},
+        {"m": "/assets/models/rule30.obj", "cap": "rule 30", "id": "viewer-rule-30"},
+        {"m": "/assets/models/rule110.obj", "cap": "rule 110", "id": "viewer-rule-110"},
+        {"m": "/assets/models/rule169.obj", "cap": "rule 169", "id": "viewer-rule-169"},
+        {"m": "/assets/models/code422.obj", "cap": "code 422", "id": "viewer-code-422"},
+        {"m": "/assets/models/code460.obj", "cap": "code 460", "id": "viewer-code-460"},
     ], darkTheme)
 });
 
@@ -66,13 +68,7 @@ import matplotlib.pyplot as plt
 
 import import_ipynb
 from automata_generation import generate, plot_run, make_columns
-```
 
-    importing Jupyter notebook from automata_generation.ipynb
-
-
-
-```python
 # manually specify the logic to map a cube face to 4 of its 8 vertexes
 def face(face, count):
     if face == 1:
@@ -87,10 +83,7 @@ def face(face, count):
         return f'f {count+1} {count+5} {count+7} {count+3}'
     elif face == 6:
         return f'f {count+5} {count+6} {count+8} {count+7}'
-```
 
-
-```python
 def generate_cell(file, count, i, j):
     start = count * 8
 
@@ -110,10 +103,8 @@ def generate_cell(file, count, i, j):
 
     lines.append("\n")
     file.writelines(lines)
-```
 
 
-```python
 def create_3d_obj(rule, data):
     count = 0
     filename = f'{rule}.obj'
@@ -158,6 +149,13 @@ And here's the result
 <div id="viewer-rule-169" style="width: 800px; height: 600px;"></div>
 <div class="caption">rule 169</div>
 
+This gets even more cool with 2D CA
+
+<div id="viewer-code-422" style="width: 800px; height: 600px;"></div>
+<div class="caption">code 422</div>
+
+<div id="viewer-code-460" style="width: 800px; height: 600px;"></div>
+<div class="caption">code 460</div>
 
 Coming soon:
 
@@ -166,7 +164,4 @@ I'm no expert on 3d visualization but I think the reason the figures are a bit l
 I'll probably need to use use [SCC](https://en.wikipedia.org/wiki/Strongly_connected_component) to undersand which cells should be merged together. The tricky thing will probably be specifying the vertexes for such non regular faces (since the list of vertex needs to be ordered - in general counter clock wise). I will probably need to used some idea from the [convex hull](https://en.wikipedia.org/wiki/Convex_hull) to specify such ordering.
 
 It should be fun
-
-Also, 3 dimensional cellular automata will come in the future.
-
 
