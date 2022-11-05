@@ -94,6 +94,8 @@ git checkout -b $DEPLOY_BRANCH
 # Export JEKYLL_ENV=production
 export JEKYLL_ENV=production
 
+rm -f _posts/2015-*
+
 # Build site
 BUNDLE_SPECIFIC_PLATFORM=1 bundle exec jekyll build
 
